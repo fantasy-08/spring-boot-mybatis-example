@@ -1,2 +1,4 @@
-# spring-boot-mybatis-example
-A simple demo of spring boot &amp; mybatis.
+# Spring Boot Mybatis Example
+
+A simple demo of Spring Boot and Mybatis.
+
