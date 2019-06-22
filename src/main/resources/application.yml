@@ -1,0 +1,16 @@
+
+# use mysql instead of h2
+#spring.profiles.active: mysql
+
+# auto map the db column in underscore case to the java property in came case
+#mybatis.configuration.mapUnderscoreToCamelCase: true
+
+# show sql statements for mapper
+logging.level.shuaicj.example.mybatis.mapper: DEBUG
+
+
+---
+spring.profiles: mysql
+spring.datasource.url: jdbc:mysql://localhost/hellomybatis?useSSL=false&useUnicode=true&characterEncoding=utf8
+spring.datasource.username: shuaicj
+spring.datasource.password: shuaicj
