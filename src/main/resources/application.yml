@@ -2,8 +2,15 @@
 # use mysql instead of h2
 #spring.profiles.active: mysql
 
-# auto map the db column in underscore case to the java property in came case
+# auto map the db column in underscore case to the java property in came case, it's optional here
+# because we have defined the resultMap
 #mybatis.configuration.mapUnderscoreToCamelCase: true
+
+# define type alias package
+#mybatis.typeAliasesPackage: shuaicj.example.mybatis.domain
+
+# mapper locations, it's optional if the mapper class and the mapper xml are in the same package
+#mybatis.mapperLocations: classpath*:/**/mapper/*.xml
 
 # show sql statements for mapper
 logging.level.shuaicj.example.mybatis.mapper: DEBUG

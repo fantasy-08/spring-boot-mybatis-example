@@ -7,11 +7,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.junit4.SpringRunner;
 import shuaicj.example.mybatis.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,81 +73,10 @@ public class UserMapperTest {
     }
 
     @Test
-    public void findByIdNotExists() {
-        assertThat(userMapper.findById(ID_NOT_EXISTS)).isNull();
-    }
-
-    @Test
-    public void findByIdOk() {
-        User u = createUser(NAME, PASS);
-        userMapper.insert(u);
-        User user = userMapper.findById(u.getId());
-        assertThat(user.getId()).isGreaterThan(0L);
-        assertThat(user.getPassword()).isEqualTo(PASS);
-        assertThat(user.getCreatedTime()).isNotNull();
-        assertThat(user.getCreatedTime()).isEqualTo(user.getUpdatedTime());
-    }
-
-    @Test
-    public void findByUsernameNotExists() {
-        assertThat(userMapper.findByUsername(NAME)).isNull();
-    }
-
-    @Test
-    public void findByUsernameOk() {
-        userMapper.insert(createUser(NAME, PASS));
-        User user = userMapper.findByUsername(NAME);
-        assertThat(user.getId()).isGreaterThan(0L);
-        assertThat(user.getPassword()).isEqualTo(PASS);
-        assertThat(user.getCreatedTime()).isNotNull();
-        assertThat(user.getCreatedTime()).isEqualTo(user.getUpdatedTime());
-    }
-
-    @Test
-    public void findByUsernamePatternNotExists() {
-        List<User> users = userMapper.findByUsernameLike(NAME_PATTERN_NOT_EXISTS);
-        assertThat(users).isEmpty();
-    }
-
-    @Test
-    public void findByUsernamePatternOk() {
-        userMapper.insert(createUser(NAME, PASS));
-        userMapper.insert(createUser(NAME2, PASS2));
-        List<User> users = userMapper.findByUsernameLike(NAME_PATTERN);
-        List<String> names = users.stream().map(User::getUsername).collect(Collectors.toList());
-        assertThat(names).containsExactly(NAME, NAME2);
-    }
-
-    @Test
-    public void deleteByIdNotExists() {
-        int num = userMapper.deleteById(ID_NOT_EXISTS);
-        assertThat(num).isEqualTo(0);
-    }
-
-    @Test
-    public void deleteByIdOk() {
-        User user = createUser(NAME, PASS);
-        userMapper.insert(user);
-        int num = userMapper.deleteById(user.getId());
-        assertThat(num).isEqualTo(1);
-    }
-
-    @Test
-    public void deleteByUsernameNotExists() {
-        int num = userMapper.deleteByUsername(NAME);
-        assertThat(num).isEqualTo(0);
-    }
-
-    @Test
-    public void deleteByUsernameOk() {
-        userMapper.insert(createUser(NAME, PASS));
-        int num = userMapper.deleteByUsername(NAME);
-        assertThat(num).isEqualTo(1);
-    }
-
-    @Test
     public void updateNotExists() {
-        int num = userMapper.update(createUser(NAME, PASS));
+        User user = createUser(NAME, PASS);
+        user.setId(ID_NOT_EXISTS);
+        int num = userMapper.update(user);
         assertThat(num).isEqualTo(0);
     }
 
@@ -178,6 +111,119 @@ public class UserMapperTest {
         assertThat(user.getUpdatedTime()).isEqualTo(now);
     }
 
+    @Test
+    public void deleteByIdNotExists() {
+        int num = userMapper.deleteById(ID_NOT_EXISTS);
+        assertThat(num).isEqualTo(0);
+    }
+
+    @Test
+    public void deleteByIdOk() {
+        User user = createUser(NAME, PASS);
+        userMapper.insert(user);
+        int num = userMapper.deleteById(user.getId());
+        assertThat(num).isEqualTo(1);
+    }
+
+    @Test
+    public void deleteByUsernameNotExists() {
+        int num = userMapper.deleteByUsername(NAME);
+        assertThat(num).isEqualTo(0);
+    }
+
+    @Test
+    public void deleteByUsernameOk() {
+        userMapper.insert(createUser(NAME, PASS));
+        int num = userMapper.deleteByUsername(NAME);
+        assertThat(num).isEqualTo(1);
+    }
+
+    @Test
+    public void findByIdNotExists() {
+        assertThat(userMapper.findById(ID_NOT_EXISTS)).isNull();
+    }
+
+    @Test
+    public void findByIdOk() {
+        User u = createUser(NAME, PASS);
+        userMapper.insert(u);
+        User user = userMapper.findById(u.getId());
+        assertThat(user.getId()).isGreaterThan(0L);
+        assertThat(user.getPassword()).isEqualTo(PASS);
+        assertThat(user.getCreatedTime()).isNotNull();
+        assertThat(user.getCreatedTime()).isEqualTo(user.getUpdatedTime());
+    }
+
+    @Test
+    public void findByUsernameNotExists() {
+        assertThat(userMapper.findByUsername(NAME)).isNull();
+    }
+
+    @Test
+    public void findByUsernameOk() {
+        userMapper.insert(createUser(NAME, PASS));
+        User user = userMapper.findByUsername(NAME);
+        assertThat(user.getId()).isGreaterThan(0L);
+        assertThat(user.getPassword()).isEqualTo(PASS);
+        assertThat(user.getCreatedTime()).isNotNull();
+        assertThat(user.getCreatedTime()).isEqualTo(user.getUpdatedTime());
+    }
+
+    @Test
+    public void findByUsernameLikeNotExists() {
+        List<User> users = userMapper.findByUsernameLike(NAME_PATTERN_NOT_EXISTS);
+        assertThat(users).isEmpty();
+    }
+
+    @Test
+    public void findByUsernameLikeOk() {
+        userMapper.insert(createUser(NAME, PASS));
+        userMapper.insert(createUser(NAME2, PASS2));
+        assertThat(getNames(userMapper.findByUsernameLike(NAME_PATTERN))).containsExactly(NAME, NAME2);
+    }
+
+    @Test(expected = BadSqlGrammarException.class)
+    public void findByUsernameInEmptyList() {
+        userMapper.findByUsernameIn(Collections.emptyList());
+    }
+
+    @Test
+    public void findByUsernameInNotExists() {
+        assertThat(userMapper.findByUsernameIn(Arrays.asList(NAME, NAME2))).isEmpty();
+    }
+
+    @Test
+    public void findByUsernameInOk() {
+        userMapper.insert(createUser(NAME, PASS));
+        userMapper.insert(createUser(NAME2, PASS2));
+        assertThat(getNames(userMapper.findByUsernameIn(Arrays.asList(NAME, NAME2)))).containsExactly(NAME, NAME2);
+    }
+
+    @Test
+    public void findByOptionalConditions() throws InterruptedException {
+        LocalDateTime t0 = LocalDateTime.now();
+        TimeUnit.MILLISECONDS.sleep(10);
+        User u1 = createUser(NAME, PASS);
+        userMapper.insert(u1);
+        LocalDateTime t1 = LocalDateTime.now();
+        TimeUnit.MILLISECONDS.sleep(10);
+        User u2 = createUser(NAME2, PASS2);
+        userMapper.insert(u2);
+        LocalDateTime t2 = LocalDateTime.now();
+        TimeUnit.MILLISECONDS.sleep(10);
+        u1.setPassword(PASS2);
+        u1.setUpdatedTime(LocalDateTime.now());
+        userMapper.update(u1);
+        assertThat(getNames(userMapper.findByOptionalConditions(null, null, null))).containsExactly(NAME, NAME2);
+        assertThat(getNames(userMapper.findByOptionalConditions(NAME2 + "%", null, null))).containsExactly(NAME2);
+        assertThat(getNames(userMapper.findByOptionalConditions(null, t1, null))).containsExactly(NAME2);
+        assertThat(getNames(userMapper.findByOptionalConditions(null, null, t2))).containsExactly(NAME);
+        assertThat(getNames(userMapper.findByOptionalConditions(NAME_PATTERN, t1, null))).containsExactly(NAME2);
+        assertThat(getNames(userMapper.findByOptionalConditions(NAME_PATTERN, null, t2))).containsExactly(NAME);
+        assertThat(getNames(userMapper.findByOptionalConditions(null, t0, t2))).containsExactly(NAME);
+        assertThat(getNames(userMapper.findByOptionalConditions(NAME_PATTERN, t0, t2))).containsExactly(NAME);
+    }
+
     private User createUser(String username, String password) {
         User user = new User();
         user.setUsername(username);
@@ -185,5 +231,9 @@ public class UserMapperTest {
         user.setCreatedTime(LocalDateTime.now());
         user.setUpdatedTime(user.getCreatedTime());
         return user;
+    }
+
+    private List<String> getNames(List<User> users) {
+        return users.stream().map(User::getUsername).collect(Collectors.toList());
     }
 }
