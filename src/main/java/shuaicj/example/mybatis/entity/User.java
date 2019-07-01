@@ -1,17 +1,22 @@
-package shuaicj.example.mybatis.domain;
+package shuaicj.example.mybatis.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import shuaicj.example.mybatis.enums.Sex;
 
 /**
  * A java bean representing a user.
  *
  * @author shuaicj 2019/06/21
  */
-public class User {
+@SuppressWarnings("serial")
+public class User implements Serializable {
 
     private Long id;
     private String username;
     private String password;
+    private Sex sex;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
 
@@ -39,6 +44,14 @@ public class User {
         this.password = password;
     }
 
+    public Sex getSex() {
+        return sex;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -57,12 +70,13 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedTime=" + updatedTime +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", username='" + username + '\''
+                + ", password='" + password + '\''
+                + ", sex=" + sex
+                + ", createdTime=" + createdTime
+                + ", updatedTime=" + updatedTime
+                + '}';
     }
 }

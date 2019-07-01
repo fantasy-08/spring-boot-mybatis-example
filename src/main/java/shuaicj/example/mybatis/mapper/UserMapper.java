@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import shuaicj.example.mybatis.domain.User;
+import shuaicj.example.mybatis.entity.User;
 
 /**
  * The mapper for {@link User}.
@@ -22,6 +22,8 @@ public interface UserMapper {
     int updatePasswordByUsername(@Param("username") String username,
                                  @Param("password") String password,
                                  @Param("updatedTime") LocalDateTime updatedTime);
+
+    int deleteAll();
 
     int deleteById(@Param("id") Long id);
 

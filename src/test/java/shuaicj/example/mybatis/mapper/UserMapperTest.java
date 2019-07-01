@@ -1,5 +1,14 @@
 package shuaicj.example.mybatis.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,16 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.junit4.SpringRunner;
-import shuaicj.example.mybatis.domain.User;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import shuaicj.example.mybatis.entity.User;
+import shuaicj.example.mybatis.enums.Sex;
 
 /**
  * Test {@link UserMapper}.
@@ -42,13 +43,12 @@ public class UserMapperTest {
 
     @Before
     public void setUp() {
-        userMapper.deleteByUsername(NAME);
-        userMapper.deleteByUsername(NAME2);
+        userMapper.deleteAll();
     }
 
     @After
     public void tearDown() {
-        setUp();
+        userMapper.deleteAll();
     }
 
     @Test(expected = DuplicateKeyException.class)
@@ -86,11 +86,13 @@ public class UserMapperTest {
         userMapper.insert(u);
         LocalDateTime now = LocalDateTime.now();
         u.setPassword(PASS2);
+        u.setSex(Sex.F);
         u.setUpdatedTime(now);
         int num = userMapper.update(u);
         assertThat(num).isEqualTo(1);
         User user = userMapper.findByUsername(NAME);
         assertThat(user.getPassword()).isEqualTo(PASS2);
+        assertThat(user.getSex()).isEqualTo(Sex.F);
         assertThat(user.getUpdatedTime()).isEqualTo(now);
     }
 
@@ -109,6 +111,20 @@ public class UserMapperTest {
         User user = userMapper.findByUsername(NAME);
         assertThat(user.getPassword()).isEqualTo(PASS2);
         assertThat(user.getUpdatedTime()).isEqualTo(now);
+    }
+
+    @Test
+    public void deleteAllWhenTableEmpty() {
+        int num = userMapper.deleteAll();
+        assertThat(num).isEqualTo(0);
+    }
+
+    @Test
+    public void deleteAllWhenTableNotEmpty() {
+        userMapper.insert(createUser(NAME, PASS));
+        userMapper.insert(createUser(NAME2, PASS2));
+        int num = userMapper.deleteAll();
+        assertThat(num).isEqualTo(2);
     }
 
     @Test
@@ -225,9 +241,14 @@ public class UserMapperTest {
     }
 
     private User createUser(String username, String password) {
+        return createUser(username, password, Sex.M);
+    }
+
+    private User createUser(String username, String password, Sex sex) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
+        user.setSex(sex);
         user.setCreatedTime(LocalDateTime.now());
         user.setUpdatedTime(user.getCreatedTime());
         return user;

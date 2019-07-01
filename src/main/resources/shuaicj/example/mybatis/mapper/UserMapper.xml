@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="shuaicj.example.mybatis.mapper.UserMapper">
-    <resultMap id="userResultMap" type="shuaicj.example.mybatis.domain.User">
+    <resultMap id="userResultMap" type="shuaicj.example.mybatis.entity.User">
         <id property="id" column="id" />
         <result property="username" column="username"/>
         <result property="password" column="password"/>
+        <result property="sex" column="sex"/>
         <result property="createdTime" column="created_time"/>
         <result property="updatedTime" column="updated_time"/>
     </resultMap>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into user(username, password, created_time, updated_time)
-        values(#{username}, #{password}, #{createdTime}, #{updatedTime})
+        insert into user (username, password, sex, created_time, updated_time)
+        values (#{username}, #{password}, #{sex}, #{createdTime}, #{updatedTime})
     </insert>
 
     <update id="update">
-        update user set password = #{password}, updated_time = #{updatedTime} where id = #{id}
+        update user set password = #{password}, sex = #{sex}, updated_time = #{updatedTime} where id = #{id}
     </update>
 
     <update id="updatePasswordByUsername">
         update user set password = #{password}, updated_time = #{updatedTime} where username = #{username}
     </update>
+
+    <delete id="deleteAll">
+        delete from user
+    </delete>
 
     <delete id="deleteById">
         delete from user where id = #{id}
