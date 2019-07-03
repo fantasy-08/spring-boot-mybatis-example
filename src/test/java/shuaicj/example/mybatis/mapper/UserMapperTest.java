@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import shuaicj.example.mybatis.entity.User;
 import shuaicj.example.mybatis.enums.Sex;
 
@@ -238,6 +239,24 @@ public class UserMapperTest {
         assertThat(getNames(userMapper.findByOptionalConditions(NAME_PATTERN, null, t2))).containsExactly(NAME);
         assertThat(getNames(userMapper.findByOptionalConditions(null, t0, t2))).containsExactly(NAME);
         assertThat(getNames(userMapper.findByOptionalConditions(NAME_PATTERN, t0, t2))).containsExactly(NAME);
+    }
+
+    @Test
+    @Transactional
+    public void mapperReturnsSameReferenceBecauseLocalSessionCacheInTransaction() {
+        userMapper.insert(createUser(NAME, PASS));
+        User user1 = userMapper.findByUsername(NAME);
+        User user2 = userMapper.findByUsername(NAME);
+        assertThat(user1).isSameAs(user2);
+    }
+
+    @Test
+    public void mapperReturnsDifferentReferencesBecauseNotInOneTransaction() {
+        userMapper.insert(createUser(NAME, PASS));
+        User user1 = userMapper.findByUsername(NAME);
+        User user2 = userMapper.findByUsername(NAME);
+        assertThat(user1).isNotSameAs(user2);
+        assertThat(user1.getId()).isEqualTo(user2.getId());
     }
 
     private User createUser(String username, String password) {

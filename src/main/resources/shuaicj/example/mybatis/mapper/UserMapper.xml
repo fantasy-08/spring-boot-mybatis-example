@@ -9,6 +9,8 @@
         <result property="createdTime" column="created_time"/>
         <result property="updatedTime" column="updated_time"/>
     </resultMap>
+    
+    <sql id="userAllColumns">id, username, password, sex, created_time, updated_time</sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into user (username, password, sex, created_time, updated_time)
@@ -36,26 +38,26 @@
     </delete>
 
     <select id="findById" resultMap="userResultMap">
-        select * from user where id = #{id}
+        select <include refid="userAllColumns"/> from user where id = #{id}
     </select>
 
     <select id="findByUsername" resultMap="userResultMap">
-        select * from user where username = #{username}
+        select <include refid="userAllColumns"/> from user where username = #{username}
     </select>
 
     <select id="findByUsernameLike" resultMap="userResultMap">
-        select * from user where username like #{pattern}
+        select <include refid="userAllColumns"/> from user where username like #{pattern}
     </select>
 
     <select id="findByUsernameIn" resultMap="userResultMap">
-        select * from user where username in
+        select <include refid="userAllColumns"/> from user where username in
         <foreach collection="usernames" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
     <select id="findByOptionalConditions" resultMap="userResultMap">
-        select * from user
+        select <include refid="userAllColumns"/> from user
         <where>
             <if test="usernamePattern != null">
                 username like #{usernamePattern}
