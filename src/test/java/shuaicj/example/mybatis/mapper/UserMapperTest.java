@@ -3,6 +3,7 @@ package shuaicj.example.mybatis.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +86,7 @@ public class UserMapperTest {
     public void updateOk() {
         User u = createUser(NAME, PASS);
         userMapper.insert(u);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = now();
         u.setPassword(PASS2);
         u.setSex(Sex.F);
         u.setUpdatedTime(now);
@@ -99,14 +100,14 @@ public class UserMapperTest {
 
     @Test
     public void updatePasswordByUsernameNotExists() {
-        int num = userMapper.updatePasswordByUsername(NAME, PASS2, LocalDateTime.now());
+        int num = userMapper.updatePasswordByUsername(NAME, PASS2, now());
         assertThat(num).isEqualTo(0);
     }
 
     @Test
     public void updatePasswordByUsernameOk() {
         userMapper.insert(createUser(NAME, PASS));
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = now();
         int num = userMapper.updatePasswordByUsername(NAME, PASS2, now);
         assertThat(num).isEqualTo(1);
         User user = userMapper.findByUsername(NAME);
@@ -218,18 +219,18 @@ public class UserMapperTest {
 
     @Test
     public void findByOptionalConditions() throws InterruptedException {
-        LocalDateTime t0 = LocalDateTime.now();
+        LocalDateTime t0 = now();
         TimeUnit.MILLISECONDS.sleep(10);
         User u1 = createUser(NAME, PASS);
         userMapper.insert(u1);
-        LocalDateTime t1 = LocalDateTime.now();
+        LocalDateTime t1 = now();
         TimeUnit.MILLISECONDS.sleep(10);
         User u2 = createUser(NAME2, PASS2);
         userMapper.insert(u2);
-        LocalDateTime t2 = LocalDateTime.now();
+        LocalDateTime t2 = now();
         TimeUnit.MILLISECONDS.sleep(10);
         u1.setPassword(PASS2);
-        u1.setUpdatedTime(LocalDateTime.now());
+        u1.setUpdatedTime(now());
         userMapper.update(u1);
         assertThat(getNames(userMapper.findByOptionalConditions(null, null, null))).containsExactly(NAME, NAME2);
         assertThat(getNames(userMapper.findByOptionalConditions(NAME2 + "%", null, null))).containsExactly(NAME2);
@@ -268,9 +269,13 @@ public class UserMapperTest {
         user.setUsername(username);
         user.setPassword(password);
         user.setSex(sex);
-        user.setCreatedTime(LocalDateTime.now());
+        user.setCreatedTime(now());
         user.setUpdatedTime(user.getCreatedTime());
         return user;
+    }
+
+    private LocalDateTime now() {
+        return LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
     }
 
     private List<String> getNames(List<User> users) {
