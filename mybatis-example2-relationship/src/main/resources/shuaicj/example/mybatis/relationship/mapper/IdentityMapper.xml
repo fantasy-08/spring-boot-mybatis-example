@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shuaicj.example.mybatis.relationship.mapper.IdentityMapper">
+    <resultMap id="identityResultMap" type="shuaicj.example.mybatis.relationship.entity.Identity">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+    </resultMap>
+
+    <resultMap id="identityDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.IdentityDetail">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+        <association property="person"
+                     column="id"
+                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findByIdentityId"/>
+    </resultMap>
+
+    <resultMap id="identityDoResultMap" type="shuaicj.example.mybatis.relationship.entity.IdentityDO">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+        <association property="person"
+                     column="id"
+                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findDoByIdentityId"/>
+    </resultMap>
+
+    <sql id="identityAllColumns">id, number</sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into identity (number) values (#{number})
+    </insert>
+
+    <delete id="deleteAll">
+        delete from identity
+    </delete>
+
+    <select id="findById" resultMap="identityResultMap">
+        select <include refid="identityAllColumns"/> from identity where id = #{id}
+    </select>
+
+    <select id="findDetailById" resultMap="identityDetailResultMap">
+        select <include refid="identityAllColumns"/> from identity where id = #{id}
+    </select>
+
+    <select id="findDoById" resultMap="identityDoResultMap">
+        select <include refid="identityAllColumns"/> from identity where id = #{id}
+    </select>
+</mapper>

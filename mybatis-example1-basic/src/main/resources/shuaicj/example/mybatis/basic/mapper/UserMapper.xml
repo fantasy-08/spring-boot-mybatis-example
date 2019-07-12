@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shuaicj.example.mybatis.basic.mapper.UserMapper">
+    <resultMap id="userResultMap" type="shuaicj.example.mybatis.basic.entity.User">
+        <id property="id" column="id" />
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="sex" column="sex"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="updatedTime" column="updated_time"/>
+    </resultMap>
+    
+    <sql id="userAllColumns">id, username, password, sex, created_time, updated_time</sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username, password, sex, created_time, updated_time)
+        values (#{username}, #{password}, #{sex}, #{createdTime}, #{updatedTime})
+    </insert>
+
+    <update id="update">
+        update user set password = #{password}, sex = #{sex}, updated_time = #{updatedTime} where id = #{id}
+    </update>
+
+    <update id="updatePasswordByUsername">
+        update user set password = #{password}, updated_time = #{updatedTime} where username = #{username}
+    </update>
+
+    <delete id="deleteAll">
+        delete from user
+    </delete>
+
+    <delete id="deleteById">
+        delete from user where id = #{id}
+    </delete>
+
+    <delete id="deleteByUsername">
+        delete from user where username = #{username}
+    </delete>
+
+    <select id="findById" resultMap="userResultMap">
+        select <include refid="userAllColumns"/> from user where id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="userResultMap">
+        select <include refid="userAllColumns"/> from user where username = #{username}
+    </select>
+
+    <select id="findByUsernameLike" resultMap="userResultMap">
+        select <include refid="userAllColumns"/> from user where username like #{pattern}
+    </select>
+
+    <select id="findByUsernameIn" resultMap="userResultMap">
+        select <include refid="userAllColumns"/> from user where username in
+        <foreach collection="usernames" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findByOptionalConditions" resultMap="userResultMap">
+        select <include refid="userAllColumns"/> from user
+        <where>
+            <if test="usernamePattern != null">
+                username like #{usernamePattern}
+            </if>
+            <if test="createdAfter != null">
+                and created_time > #{createdAfter}
+            </if>
+            <if test="updatedAfter != null">
+                and updated_time > #{updatedAfter}
+            </if>
+        </where>
+    </select>
+</mapper>
