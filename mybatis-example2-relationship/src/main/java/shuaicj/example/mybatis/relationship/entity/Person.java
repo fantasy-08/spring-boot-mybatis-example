@@ -3,7 +3,7 @@ package shuaicj.example.mybatis.relationship.entity;
 import java.io.Serializable;
 
 /**
- * A java bean representing a person.
+ * A java bean representing a person detail.
  *
  * @author shuaicj 2019/07/03
  */
@@ -12,14 +12,13 @@ public class Person implements Serializable {
 
     private Long id;
     private String name;
-    private Long identityId;
+    private Identity identity;
 
     public Person() {
     }
 
-    public Person(String name, Long identityId) {
+    public Person(String name) {
         this.name = name;
-        this.identityId = identityId;
     }
 
     public Long getId() {
@@ -38,12 +37,12 @@ public class Person implements Serializable {
         this.name = name;
     }
 
-    public Long getIdentityId() {
-        return identityId;
+    public Identity getIdentity() {
+        return identity;
     }
 
-    public void setIdentityId(Long identityId) {
-        this.identityId = identityId;
+    public void setIdentity(Identity identity) {
+        this.identity = identity;
     }
 
     @Override
@@ -51,7 +50,7 @@ public class Person implements Serializable {
         return "Person{"
                 + "id=" + id
                 + ", name='" + name + '\''
-                + ", identityId=" + identityId
+                + ", identity=" + identity
                 + '}';
     }
 }

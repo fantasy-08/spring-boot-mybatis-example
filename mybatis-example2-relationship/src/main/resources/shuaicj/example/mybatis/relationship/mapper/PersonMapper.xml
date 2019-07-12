@@ -4,74 +4,30 @@
     <resultMap id="personResultMap" type="shuaicj.example.mybatis.relationship.entity.Person">
         <id property="id" column="id" />
         <result property="name" column="name"/>
-        <result property="identityId" column="identity_id"/>
-    </resultMap>
-
-    <resultMap id="personDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.PersonDetail">
-        <id property="id" column="id" />
-        <result property="name" column="name"/>
         <association property="identity"
                      column="identity_id"
                      select="shuaicj.example.mybatis.relationship.mapper.IdentityMapper.findById"/>
     </resultMap>
 
-    <resultMap id="personDetailResultMap2" type="shuaicj.example.mybatis.relationship.entity.PersonDetail">
-        <id property="id" column="person_id" />
-        <result property="name" column="person_name"/>
-        <association property="identity"
-                     columnPrefix="identity_"
-                     resultMap="shuaicj.example.mybatis.relationship.mapper.IdentityMapper.identityResultMap"/>
-    </resultMap>
-
-    <resultMap id="personDoResultMap" type="shuaicj.example.mybatis.relationship.entity.PersonDO">
-        <id property="id" column="id" />
-        <result property="name" column="name"/>
-        <association property="identity"
-                     column="identity_id"
-                     select="shuaicj.example.mybatis.relationship.mapper.IdentityMapper.findDoById"/>
-    </resultMap>
+<!--    <resultMap id="personResultMap2" type="shuaicj.example.mybatis.relationship.entity.Person">-->
+<!--        <id property="id" column="person_id" />-->
+<!--        <result property="name" column="person_name"/>-->
+<!--        <association property="identity"-->
+<!--                     columnPrefix="identity_"-->
+<!--                     resultMap="shuaicj.example.mybatis.relationship.mapper.IdentityMapper.identityResultMap"/>-->
+<!--    </resultMap>-->
 
     <sql id="personAllColumns">id, name, identity_id</sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into person (name, identity_id) values (#{name}, #{identityId})
+        insert into person (name, identity_id) values (#{name}, #{identity.id})
     </insert>
 
     <delete id="deleteAll">
         delete from person
     </delete>
 
-    <select id="findById" resultMap="personResultMap">
-        select <include refid="personAllColumns"/> from person where id = #{id}
+    <select id="findByName" resultMap="personResultMap">
+        select <include refid="personAllColumns"/> from person where name = #{name}
     </select>
-
-    <select id="findByIdentityId" resultMap="personResultMap">
-        select <include refid="personAllColumns"/> from person where identity_id = #{identityId}
-    </select>
-
-    <select id="findDetailById" resultMap="personDetailResultMap">
-        select <include refid="personAllColumns"/> from person where id = #{id}
-    </select>
-
-    <select id="findDetailById2" resultMap="personDetailResultMap2">
-        select
-            p.id as person_id,
-            p.name as person_name,
-            i.id as identity_id,
-            i.number as identity_number
-        from person p, identity i
-        where p.id = #{id} and p.identity_id = i.id
-    </select>
-
-    <select id="findDoById" resultMap="personDoResultMap">
-        select <include refid="personAllColumns"/> from person where id = #{id}
-    </select>
-
-    <select id="findDoByIdentityId" resultMap="personDoResultMap">
-        select <include refid="personAllColumns"/> from person where identity_id = #{identityId}
-    </select>
-
-<!--    <select id="findByName" resultMap="personResultMap">-->
-<!--        select <include refid="personAllColumns"/> from person where name = #{name}-->
-<!--    </select>-->
 </mapper>

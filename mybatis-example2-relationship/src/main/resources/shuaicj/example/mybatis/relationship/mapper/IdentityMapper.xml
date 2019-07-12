@@ -6,24 +6,6 @@
         <result property="number" column="number"/>
     </resultMap>
 
-    <resultMap id="identityDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.IdentityDetail">
-        <id property="id" column="id" />
-        <result property="number" column="number"/>
-        <association property="person"
-                     column="id"
-                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findByIdentityId"/>
-    </resultMap>
-
-    <resultMap id="identityDoResultMap" type="shuaicj.example.mybatis.relationship.entity.IdentityDO">
-        <id property="id" column="id" />
-        <result property="number" column="number"/>
-        <association property="person"
-                     column="id"
-                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findDoByIdentityId"/>
-    </resultMap>
-
-    <sql id="identityAllColumns">id, number</sql>
-
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into identity (number) values (#{number})
     </insert>
@@ -33,14 +15,6 @@
     </delete>
 
     <select id="findById" resultMap="identityResultMap">
-        select <include refid="identityAllColumns"/> from identity where id = #{id}
-    </select>
-
-    <select id="findDetailById" resultMap="identityDetailResultMap">
-        select <include refid="identityAllColumns"/> from identity where id = #{id}
-    </select>
-
-    <select id="findDoById" resultMap="identityDoResultMap">
-        select <include refid="identityAllColumns"/> from identity where id = #{id}
+        select id, number from identity where id = #{id}
     </select>
 </mapper>

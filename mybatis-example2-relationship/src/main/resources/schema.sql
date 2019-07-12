@@ -10,6 +10,7 @@ create table person (
 );
 
 create unique index uk_person_identity_id on person (identity_id);
+create index idx_person_name on person (name);
 
 
 -- identity
