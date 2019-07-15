@@ -12,6 +12,7 @@ public class Identity implements Serializable {
 
     private Long id;
     private String number;
+    private Person person;
 
     public Identity() {
     }
@@ -34,6 +35,14 @@ public class Identity implements Serializable {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     @Override

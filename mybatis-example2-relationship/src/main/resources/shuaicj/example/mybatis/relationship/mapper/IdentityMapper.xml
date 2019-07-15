@@ -6,6 +6,14 @@
         <result property="number" column="number"/>
     </resultMap>
 
+    <resultMap id="identityDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.Identity">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+        <association property="person"
+                     column="id"
+                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findByIdentityId"/>
+    </resultMap>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into identity (number) values (#{number})
     </insert>
@@ -16,5 +24,9 @@
 
     <select id="findById" resultMap="identityResultMap">
         select id, number from identity where id = #{id}
+    </select>
+
+    <select id="findDetailByNumber" resultMap="identityDetailResultMap">
+        select id, number from identity where number = #{number}
     </select>
 </mapper>

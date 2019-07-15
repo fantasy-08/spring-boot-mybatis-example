@@ -17,4 +17,6 @@ public interface IdentityMapper {
     int deleteAll();
 
     Identity findById(@Param("id") Long id);
+
+    Identity findDetailByNumber(@Param("number") String number);
 }
