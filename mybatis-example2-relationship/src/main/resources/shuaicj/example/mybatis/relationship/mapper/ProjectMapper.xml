@@ -6,7 +6,15 @@
         <result property="name" column="name"/>
     </resultMap>
 
-    <sql id="projectAllColumns">id, name</sql>
+    <resultMap id="projectDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.Project">
+        <id property="id" column="id" />
+        <result property="name" column="name"/>
+        <collection property="persons"
+                    column="id"
+                    select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findByProjectId"/>
+    </resultMap>
+
+    <sql id="allColumns">pj.id, pj.name</sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into project (name) values (#{name})
@@ -17,10 +25,20 @@
     </delete>
 
     <select id="findById" resultMap="projectResultMap">
-        select <include refid="projectAllColumns"/> from project where id = #{id}
+        select <include refid="allColumns"/> from project pj where id = #{id}
     </select>
 
-    <select id="findByName" resultMap="projectResultMap">
-        select <include refid="projectAllColumns"/> from project where name = #{name}
+    <select id="findByPersonId" resultMap="projectResultMap">
+        select
+            <include refid="allColumns"/>
+        from
+            project pj, project_person pp
+        where
+            pj.id = pp.project_id
+            and pp.person_id = #{person_id}
+    </select>
+
+    <select id="findDetailByName" resultMap="projectDetailResultMap">
+        select <include refid="allColumns"/> from project pj where name = #{name}
     </select>
 </mapper>

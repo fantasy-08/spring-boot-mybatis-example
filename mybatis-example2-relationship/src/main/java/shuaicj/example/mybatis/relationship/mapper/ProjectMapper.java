@@ -20,5 +20,7 @@ public interface ProjectMapper {
 
     Project findById(@Param("id") Long id);
 
-    List<Project> findByName(@Param("name") String name);
+    List<Project> findByPersonId(@Param("personId") Long personId);
+
+    List<Project> findDetailByName(@Param("name") String name);
 }

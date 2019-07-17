@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shuaicj.example.mybatis.relationship.mapper.PhoneMapper">
+    <resultMap id="phoneResultMap" type="shuaicj.example.mybatis.relationship.entity.Phone">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+    </resultMap>
+
+    <resultMap id="phoneDetailResultMap" type="shuaicj.example.mybatis.relationship.entity.Phone">
+        <id property="id" column="id" />
+        <result property="number" column="number"/>
+        <association property="person"
+                     column="person_id"
+                     select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findById"/>
+    </resultMap>
+
+    <sql id="allColumns">ph.id, ph.number, ph.person_id</sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into phone (number, person_id) values (#{number}, #{person.id})
+    </insert>
+
+    <delete id="deleteAll">
+        delete from phone
+    </delete>
+
+    <select id="findById" resultMap="phoneResultMap">
+        select <include refid="allColumns"/> from phone ph where id = #{id}
+    </select>
+
+    <select id="findByPersonId" resultMap="phoneResultMap">
+        select <include refid="allColumns"/> from phone ph where person_id = #{personId}
+    </select>
+
+    <select id="findDetailByNumber" resultMap="phoneDetailResultMap">
+        select <include refid="allColumns"/> from phone ph where number = #{number}
+    </select>
+</mapper>

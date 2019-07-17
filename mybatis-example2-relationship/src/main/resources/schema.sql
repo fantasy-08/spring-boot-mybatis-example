@@ -9,8 +9,8 @@ create table person (
     identity_id bigint unsigned not null
 );
 
-create unique index uk_person_identity_id on person (identity_id);
 create index idx_person_name on person (name);
+create unique index uk_person_identity_id on person (identity_id);
 
 
 -- identity
@@ -35,6 +35,7 @@ create table phone (
     person_id bigint unsigned not null
 );
 
+create unique index uk_phone_number on phone (number);
 create index idx_phone_person_id on phone (person_id);
 
 

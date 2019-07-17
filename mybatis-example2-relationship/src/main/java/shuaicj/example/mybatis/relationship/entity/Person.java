@@ -1,6 +1,7 @@
 package shuaicj.example.mybatis.relationship.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * A java bean representing a person detail.
@@ -13,6 +14,8 @@ public class Person implements Serializable {
     private Long id;
     private String name;
     private Identity identity;
+    private List<Phone> phones;
+    private List<Project> projects;
 
     public Person() {
     }
@@ -45,12 +48,30 @@ public class Person implements Serializable {
         this.identity = identity;
     }
 
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
     @Override
     public String toString() {
         return "Person{"
                 + "id=" + id
                 + ", name='" + name + '\''
                 + ", identity=" + identity
+                + ", phones=" + phones
+                + ", projects=" + projects
                 + '}';
     }
 }

@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import shuaicj.example.mybatis.relationship.entity.Person;
 
+import java.util.List;
+
 /**
  * The mapper for {@link Person}.
  *
@@ -20,5 +22,9 @@ public interface PersonMapper {
 
     Person findByIdentityId(@Param("identityId") Long identityId);
 
-    Person findDetailByName(@Param("name") String name);
+    List<Person> findByProjectId(@Param("projectId") Long projectId);
+
+    List<Person> findDetailByName(@Param("name") String name);
+
+    List<Person> findDetailByNameViaJoin(@Param("name") String name);
 }
