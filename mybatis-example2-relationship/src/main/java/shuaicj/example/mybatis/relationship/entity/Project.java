@@ -48,7 +48,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "Person{"
+        return "Project{"
                 + "id=" + id
                 + ", name='" + name + '\''
                 + '}';

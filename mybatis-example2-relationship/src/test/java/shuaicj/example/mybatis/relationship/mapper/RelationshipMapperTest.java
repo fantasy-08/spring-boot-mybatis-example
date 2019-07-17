@@ -80,11 +80,9 @@ public class RelationshipMapperTest {
         ProjectPerson projectPerson11 = new ProjectPerson(project1, person1);
         ProjectPerson projectPerson12 = new ProjectPerson(project1, person2);
         ProjectPerson projectPerson21 = new ProjectPerson(project2, person1);
-        ProjectPerson projectPerson22 = new ProjectPerson(project2, person2);
         projectPersonMapper.insert(projectPerson11);
         projectPersonMapper.insert(projectPerson12);
         projectPersonMapper.insert(projectPerson21);
-        projectPersonMapper.insert(projectPerson22);
     }
 
     @After
@@ -136,5 +134,52 @@ public class RelationshipMapperTest {
         assertThat(phone.getPerson()).isNotNull();
         assertThat(phone.getPerson().getName()).isEqualTo(PERSON_1);
         assertThat(phone.getPerson().getPhones()).isNull();
+    }
+
+    @Test
+    public void personToProjectIsManyToMany() {
+        List<Person> persons = personMapper.findDetailByName(PERSON_1);
+        assertThat(persons).hasSize(1);
+        Person person = persons.get(0);
+        assertThat(person.getName()).isEqualTo(PERSON_1);
+        assertThat(person.getProjects()).isNotNull();
+        assertThat(person.getProjects().stream().map(Project::getName)).containsExactly(PROJECT_1, PROJECT_2);
+        for (Project project : person.getProjects()) {
+            assertThat(project.getPersons()).isNull();
+        }
+    }
+
+    @Test
+    public void projectToPersonIsManyToMany() {
+        List<Project> projects = projectMapper.findDetailByName(PROJECT_1);
+        assertThat(projects).hasSize(1);
+        Project project = projects.get(0);
+        assertThat(project.getName()).isEqualTo(PROJECT_1);
+        assertThat(project.getPersons()).isNotNull();
+        assertThat(project.getPersons().stream().map(Person::getName)).containsExactly(PERSON_1, PERSON_2);
+        for (Person person : project.getPersons()) {
+            assertThat(person.getProjects()).isNull();
+        }
+    }
+
+    @Test
+    public void findDetailByNameViaJoin() {
+        List<Person> persons = personMapper.findDetailByNameViaJoin(PERSON_1);
+        assertThat(persons).hasSize(1);
+        Person person = persons.get(0);
+        assertThat(person.getName()).isEqualTo(PERSON_1);
+        assertThat(person.getIdentity()).isNotNull();
+        assertThat(person.getIdentity().getNumber()).isEqualTo(IDENTITY_1);
+        assertThat(person.getIdentity().getPerson()).isNull();
+        assertThat(person.getPhones()).isNotNull();
+        assertThat(person.getPhones().stream().map(Phone::getNumber)).containsExactly(PHONE_1, PHONE_2);
+        for (Phone phone : person.getPhones()) {
+            assertThat(phone.getPerson()).isNull();
+        }
+        assertThat(person.getProjects()).isNotNull();
+        assertThat(person.getProjects().stream().map(Project::getName)).containsExactly(PROJECT_1, PROJECT_2);
+        for (Project project : person.getProjects()) {
+            assertThat(project.getPersons()).isNull();
+        }
     }
 }

@@ -26,5 +26,5 @@ public interface PersonMapper {
 
     List<Person> findDetailByName(@Param("name") String name);
 
-    List<Person> findDetailByName2(@Param("name") String name);
+    List<Person> findDetailByNameViaJoin(@Param("name") String name);
 }

@@ -14,7 +14,7 @@
                      select="shuaicj.example.mybatis.relationship.mapper.PersonMapper.findById"/>
     </resultMap>
 
-    <sql id="allColumns">id, number, person_id</sql>
+    <sql id="allColumns">ph.id, ph.number, ph.person_id</sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into phone (number, person_id) values (#{number}, #{person.id})
@@ -25,14 +25,14 @@
     </delete>
 
     <select id="findById" resultMap="phoneResultMap">
-        select <include refid="allColumns"/> from phone where id = #{id}
+        select <include refid="allColumns"/> from phone ph where id = #{id}
     </select>
 
     <select id="findByPersonId" resultMap="phoneResultMap">
-        select <include refid="allColumns"/> from phone where person_id = #{personId}
+        select <include refid="allColumns"/> from phone ph where person_id = #{personId}
     </select>
 
     <select id="findDetailByNumber" resultMap="phoneDetailResultMap">
-        select <include refid="allColumns"/> from phone where number = #{number}
+        select <include refid="allColumns"/> from phone ph where number = #{number}
     </select>
 </mapper>
