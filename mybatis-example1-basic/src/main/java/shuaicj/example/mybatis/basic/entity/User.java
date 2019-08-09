@@ -1,9 +1,9 @@
 package shuaicj.example.mybatis.basic.entity;
 
-import shuaicj.example.mybatis.basic.enums.Sex;
-
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
+
+import shuaicj.example.mybatis.basic.enums.Sex;
 
 /**
  * A java bean representing a user.
@@ -17,8 +17,8 @@ public class User implements Serializable {
     private String username;
     private String password;
     private Sex sex;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+    private Instant createdTime;
+    private Instant updatedTime;
 
     public Long getId() {
         return id;
@@ -52,19 +52,19 @@ public class User implements Serializable {
         this.sex = sex;
     }
 
-    public LocalDateTime getCreatedTime() {
+    public Instant getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Instant createdTime) {
         this.createdTime = createdTime;
     }
 
-    public LocalDateTime getUpdatedTime() {
+    public Instant getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
+    public void setUpdatedTime(Instant updatedTime) {
         this.updatedTime = updatedTime;
     }
 
