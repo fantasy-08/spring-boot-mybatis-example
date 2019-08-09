@@ -1,0 +1,8 @@
+spring.profiles.active: redis
+logging.level.org.spring: DEBUG
+logging.level.io.lettuce: DEBUG
+
+---
+spring.profiles: redis
+spring.cache.type: REDIS
+#spring.cache.type: SIMPLE
