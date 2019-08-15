@@ -1,8 +1,18 @@
-spring.profiles.active: redis
-logging.level.org.spring: DEBUG
-logging.level.io.lettuce: DEBUG
+#spring.profiles.active: jcache-caffeine
+spring.profiles.active: caffeine
+#spring.profiles.active: concurrent-map
+#spring.profiles.active: redis
+#logging.level.org.spring: DEBUG
+#logging.level.io.lettuce: DEBUG
 
----
-spring.profiles: redis
-spring.cache.type: REDIS
+#---
+#spring.profiles: caffeine
+#spring.cache.type: JCACHE
+#
+#---
+#spring.profiles: redis
+#spring.cache.type: REDIS
+#
+#---
+#spring.profiles: concurrent-map
 #spring.cache.type: SIMPLE

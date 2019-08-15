@@ -8,12 +8,12 @@ import org.springframework.cache.annotation.Cacheable;
 /**
  * The interface for cached user.
  *
- * @author shuaicj 2017/02/13
+ * @author shuaicj 2019/08/15
  */
 @CacheConfig(cacheNames = "userCache")
 public interface CachedUserService {
 
-    @Cacheable(sync = false)
+    @Cacheable(sync = true)
     User find(String username);
 
     @CacheEvict

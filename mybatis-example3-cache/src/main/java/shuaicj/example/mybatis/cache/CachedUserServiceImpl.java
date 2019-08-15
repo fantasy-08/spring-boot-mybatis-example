@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * The implementation for CachedUserService.
  *
- * @author shuaicj 2017/02/13
+ * @author shuaicj 2019/08/15
  */
 @Service
 public class CachedUserServiceImpl implements CachedUserService {
@@ -24,7 +24,7 @@ public class CachedUserServiceImpl implements CachedUserService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new User(username, "china");
+        return new User(1L, username, "china");
     }
 
     @Override
@@ -33,6 +33,6 @@ public class CachedUserServiceImpl implements CachedUserService {
 
     @Override
     public User update(String username, String address) {
-        return new User(username, address);
+        return new User(3L, username, address);
     }
 }
