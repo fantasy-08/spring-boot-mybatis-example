@@ -12,6 +12,7 @@ import javax.cache.spi.CachingProvider;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.jcache.configuration.CaffeineConfiguration;
 import com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider;
+import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -34,18 +35,46 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class ApplicationConfig {
 
     /**
-     * The simple ConcurrentMap cache. It does not support expiration.
+     * The Ehcache 3.x as JCache.
      */
     @Bean
-    @Profile("concurrent-map")
-    public CacheManager concurrentMapCacheManager() {
-        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
-        cacheManager.setStoreByValue(true); // return a copy of cached object
-        return cacheManager;
+    @Profile("jcache-ehcache3")
+    public CacheManager jcacheEhcache3CacheManager() {
+        return jcacheCacheManager(EhcacheCachingProvider.class.getName());
     }
 
     /**
-     * The Caffeine original.
+     * The Caffeine as JCache.
+     */
+    @Bean
+    @Profile("jcache-caffeine")
+    public CacheManager jcacheCaffeineCacheManager() {
+        return jcacheCacheManager(CaffeineCachingProvider.class.getName());
+    }
+
+    /**
+     * The base to use JCache.
+     */
+    private CacheManager jcacheCacheManager(String providerFullyQualifiedClassName) {
+        CachingProvider provider = Caching.getCachingProvider(providerFullyQualifiedClassName);
+        javax.cache.CacheManager cacheManager = provider.getCacheManager();
+
+        CaffeineConfiguration<Object, Object> config1 = new CaffeineConfiguration<>();
+        config1.setExpiryPolicyFactory(() -> new AccessedExpiryPolicy(new javax.cache.expiry.Duration(TimeUnit.SECONDS, 60L)));
+        config1.setStoreByValue(true); // return a copy of cached object
+
+        CaffeineConfiguration<Object, Object> config2 = new CaffeineConfiguration<>();
+        config2.setExpiryPolicyFactory(() -> new AccessedExpiryPolicy(new javax.cache.expiry.Duration(TimeUnit.SECONDS, 120L)));
+        config2.setStoreByValue(true); // return a copy of cached object
+
+        cacheManager.createCache("userCache", config1);
+        cacheManager.createCache("anotherCache", config2);
+
+        return new JCacheCacheManager(cacheManager);
+    }
+
+    /**
+     * The Caffeine native.
      * Note it does not support 'setStoreByValue'. To do so, see {@link #jcacheCaffeineCacheManager()}.
      */
     @Bean
@@ -61,30 +90,6 @@ public class ApplicationConfig {
                                                           .build())
         ));
         return cacheManager;
-    }
-
-    /**
-     * The Caffeine as JCache. Support java config, and also Typesafe config file.
-     * See https://github.com/ben-manes/caffeine/blob/master/jcache/src/test/resources/application.conf.
-     */
-    @Bean
-    @Profile("jcache-caffeine")
-    public CacheManager jcacheCaffeineCacheManager() {
-        CachingProvider provider = Caching.getCachingProvider(CaffeineCachingProvider.class.getName());
-        javax.cache.CacheManager cacheManager = provider.getCacheManager();
-
-        CaffeineConfiguration<Object, Object> config1 = new CaffeineConfiguration<>();
-        config1.setExpiryPolicyFactory(() -> new AccessedExpiryPolicy(new javax.cache.expiry.Duration(TimeUnit.SECONDS, 60L)));
-        config1.setStoreByValue(true); // return a copy of cached object
-
-        CaffeineConfiguration<Object, Object> config2 = new CaffeineConfiguration<>();
-        config2.setExpiryPolicyFactory(() -> new AccessedExpiryPolicy(new javax.cache.expiry.Duration(TimeUnit.SECONDS, 120L)));
-        config2.setStoreByValue(true); // return a copy of cached object
-
-        cacheManager.createCache("userCache", config1);
-        cacheManager.createCache("anotherCache", config2);
-
-        return new JCacheCacheManager(cacheManager);
     }
 
     /**
@@ -110,5 +115,16 @@ public class ApplicationConfig {
                                 .cacheDefaults(defaultConfig)
                                 .withInitialCacheConfigurations(configMap)
                                 .build();
+    }
+
+    /**
+     * The simple ConcurrentMap cache. It does not support expiration.
+     */
+    @Bean
+    @Profile("concurrent-map")
+    public CacheManager concurrentMapCacheManager() {
+        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+        cacheManager.setStoreByValue(true); // return a copy of cached object
+        return cacheManager;
     }
 }
