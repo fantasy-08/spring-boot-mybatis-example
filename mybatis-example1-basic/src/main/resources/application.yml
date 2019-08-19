@@ -16,7 +16,7 @@
 mybatis.configuration.defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler
 
 # show sql statements for mapper
-logging.level.shuaicj.example.mybatis..basic.mapper: DEBUG
+logging.level.shuaicj.example.mybatis.basic.mapper: DEBUG
 
 
 ---

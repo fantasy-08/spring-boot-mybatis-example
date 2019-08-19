@@ -1,4 +1,4 @@
-package shuaicj.example.mybatis.cache;
+package shuaicj.example.mybatis.cache.config;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  * @author shuaicj 2019/07/19
  */
 @Configuration
-public class ApplicationConfig {
+public class Config {
 
     /**
      * The Ehcache 3.x as JCache.
