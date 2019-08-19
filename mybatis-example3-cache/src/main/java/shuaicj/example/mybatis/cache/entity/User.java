@@ -1,14 +1,15 @@
-package shuaicj.example.mybatis.basic.entity;
+package shuaicj.example.mybatis.cache.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 
-import shuaicj.example.mybatis.basic.enums.Sex;
+import shuaicj.example.mybatis.cache.enums.Sex;
 
 /**
  * A java bean representing a user.
  *
- * @author shuaicj 2019/06/21
+ * @author shuaicj 2019/08/19
  */
 @SuppressWarnings("serial")
 public class User implements Serializable {
@@ -66,6 +67,24 @@ public class User implements Serializable {
 
     public void setUpdatedTime(Instant updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) &&
+                username.equals(user.username) &&
+                password.equals(user.password) &&
+                sex == user.sex &&
+                createdTime.equals(user.createdTime) &&
+                updatedTime.equals(user.updatedTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

@@ -1,0 +1,19 @@
+spring.profiles.active: jcache-ehcache3
+#spring.profiles.active: jcache-ehcache3,mysql
+#spring.profiles.active: jcache-caffeine
+#spring.profiles.active: caffeine
+#spring.profiles.active: redis
+#spring.profiles.active: concurrent-map
+
+# use EnumOrdinalTypeHandler instead of EnumTypeHandler
+mybatis.configuration.defaultEnumTypeHandler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+
+# show sql statements for mapper
+logging.level.shuaicj.example.mybatis.cache.mapper: DEBUG
+
+
+---
+spring.profiles: mysql
+spring.datasource.url: jdbc:mysql://localhost/hellomybatis?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+spring.datasource.username: shuaicj
+spring.datasource.password: shuaicj

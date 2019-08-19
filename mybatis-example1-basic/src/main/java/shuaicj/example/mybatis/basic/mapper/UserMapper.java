@@ -1,6 +1,6 @@
 package shuaicj.example.mybatis.basic.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -21,7 +21,7 @@ public interface UserMapper {
 
     int updatePasswordByUsername(@Param("username") String username,
                                  @Param("password") String password,
-                                 @Param("updatedTime") LocalDateTime updatedTime);
+                                 @Param("updatedTime") Instant updatedTime);
 
     int deleteAll();
 
@@ -38,6 +38,6 @@ public interface UserMapper {
     List<User> findByUsernameIn(@Param("usernames") List<String> usernames);
 
     List<User> findByOptionalConditions(@Param("usernamePattern") String usernamePattern,
-                                        @Param("createdAfter") LocalDateTime createdAfter,
-                                        @Param("updatedAfter") LocalDateTime updatedAfter);
+                                        @Param("createdAfter") Instant createdAfter,
+                                        @Param("updatedAfter") Instant updatedAfter);
 }
